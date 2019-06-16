@@ -19,7 +19,7 @@ RUN apt-get -y install git procps lsb-release
 # ****************************************************
 RUN apt-get -y install ruby-full build-essential zlib1g-dev
 RUN gem install jekyll bundler
-RUN bundle install
+#RUN BUNDLE_SILENCE_ROOT_WARNING=1 bundle install
 
 # Clean up
 RUN apt-get autoremove -y \
