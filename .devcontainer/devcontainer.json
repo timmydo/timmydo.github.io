@@ -3,7 +3,8 @@
 	"dockerFile": "Dockerfile",
 	"appPort": 4000,
 	"extensions": [
-		"shd101wyy.markdown-preview-enhanced"
+		"shd101wyy.markdown-preview-enhanced",
+		"streetsidesoftware.code-spell-checker"
 	],
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
