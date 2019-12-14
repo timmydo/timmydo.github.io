@@ -1,0 +1,28 @@
+---
+layout: post
+title:  "Having Kids"
+date:  Sat, 14 Dec 2019 13:20:16 -0800
+tags:
+  - kids
+  - hobbies
+  - paul graham
+---
+
+I created this blog with the intention of writing a blog entry 2-3 times a month. As I look back over the previous entries, I kept that up for about two months, then things started to slow down. I didn't write an entry in October or November, and I'm struggling to come up with anything in December. I was thinking I would take a week off of work while my kids are in day care to give me some time to create something cool, but I'm not one to have a bunch of new ideas for side projects. I think it's because necessity is the mother of invention and I can't think of anything I need.
+
+I did want to learn about creating Kubernetes operators and custom resource definitions (CRD) as a sort of devops abstraction, but I think that will probably have to wait a bit. Hopefully I'll cover that in a future entry.
+
+I read [a blog entry by Paul Graham on Having Kids](http://paulgraham.com/kids.html). I thought it was a good read, and maybe it's time for me to put something non-technical on this blog as well because it has had a big effect on me as well. As I write this, I have a son and daughter in the 1-3 year-old range. They quickly became the most important things in my life, and I wouldn't give them up for anything, but having kids does entail some sacrifices. It is amazing how your brain changes after having kids. This quote from Paul Graham's blog really resonated with me: 
+
+> Partly, and I won't deny it, this is because of serious chemical changes that happened almost instantly when our first child was born. It was like someone flipped a switch. I suddenly felt protective not just toward our child, but toward all children. As I was driving my wife and new son home from the hospital, I approached a crosswalk full of pedestrians, and I found myself thinking "I have to be really careful of all these people. Every one of them is someone's child!"
+
+
+The loss of 'me time' is apparent every time I pull into the garage. I see my road bike and mountain bike with flat tires--I haven't taken either on a ride since before I had kids. Priorities change. I still run four times a week for exercise. I still manage to finish a decent sized video game every month. But hobbies like cycling, photography, sewing, leather working, piano, and especially programming have become much harder to focus on with small kids. Not that I was actively doing all those things previously, but I had at some point in years prior...
+
+Most of my hobbies happened outside of work hours, which is why the time I have spent on those has gone down. But I also did a lot of programming and learning in my free time, and that has gone down as well. I need to spend more time learning new things at work. That would make a good new year's resolution.
+
+The other quote that really made me think from Paul Graham's blog entry was this:
+
+> I hate to say this, because being ambitious has always been a part of my identity, but having kids may make one less ambitious. It hurts to see that sentence written down. I squirm to avoid it. But if there weren't something real there, why would I squirm? The fact is, once you have kids, you're probably going to care more about them than you do about yourself. And attention is a zero-sum game. 
+
+This is hard to acknowledge. It hurts to think that maybe I'll become a worse software engineer by having kids. There is probably has some truth to it. After becoming a parent, I have also thought more about becoming a people manager. I always wanted to stay on a strong technical path and likened becoming a manager (for myself) to being [promoted until incompetent](https://en.wikipedia.org/wiki/Peter_principle). Will being a parent put me on a path where I would want to guide others like I would my own children?
