@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Building Linux Images with cloud-init"
-date:  Sun, 29 Dec 2019 13:57:14 -0800
+date:  Sun, 29 Dec 2019 13:57:15 -0800
 tags:
   - cloud-init
   - pmbootstrap
