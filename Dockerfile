@@ -6,7 +6,8 @@ RUN apt-get update \
 
 RUN apt-get -y install git procps lsb-release
 
-RUN apt-get -y install ruby2.5 build-essential zlib1g-dev
+RUN apt-get -y install curl build-essential zlib1g-dev ruby-full
+#RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - && curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - && curl -sSL https://get.rvm.io | bash -s stable --ruby
 RUN gem install jekyll bundler
 
 # Clean up
