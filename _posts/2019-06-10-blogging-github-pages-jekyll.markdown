@@ -8,6 +8,12 @@ tags:
   - VS Code
 ---
 
+### Update on 2020-04-11
+
+These instructions are a little outdated. [My github repo](https://github.com/timmydo/timmydo.github.io) has the files I'm using and a reader has left some helpful feedback [here](https://github.com/timmydo/timmydo.github.io/issues/15). The flow I used to publish this update from my Linux machine (which I primarily use now for personal things) was to run `docker.sh` from a terminal window, and inside the container I ran `cd /blog`, `bundle install`, `./start.sh` while editing this post with GNU Emacs. I'd recommend checking out the github issue as the person who reported it also shows how to run the container as a regular user which would be a best practice.
+
+### Original Post
+
 When I decided I'd try blogging, I knew I wanted a blogging platform that gave me full control over my data, sort of like how having a custom domain gives me full control over my email. I wanted the blog entries to be written in a markdown format and checked into git. With that in mind, a quick internet search turned up GitHub Pages and Jekyll.
 
 [GitHub Pages](https://pages.github.com/) makes it pretty easy to generate a site off content that is stored in git. [Jekyll](https://jekyllrb.com/) is a Ruby-based platform for generating mostly static web content. [VS Code](https://code.visualstudio.com/) is my editor of choice when I want to open a directory of files.
