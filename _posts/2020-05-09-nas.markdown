@@ -1,0 +1,91 @@
+---
+layout: post
+title:  "Home NAS Part 1: Preparation"
+date:  Sat, 02 May 2020 20:30:12 -0700
+tags:
+  - NAS
+  - google photos
+  - onedrive
+  - sync
+---
+
+
+One of my new year's resolutions was to not have a single tech company
+be a single point of failure in my technical life. There have been a
+bunch of
+[attempts](https://gizmodo.com/i-cut-the-big-five-tech-giants-from-my-life-it-was-hel-1831304194)
+to cut them out completely, but this is isn't about cutting them out
+completely.
+
+When I look at the things I rely on, Google Photos is one that started
+out so convenient ("turn on photo backup?"), so well-done ("look at
+this video we made showing memories from the first three months with
+your newborn"), that it was easy to lose discipline and let it manage
+everything. Eventually I had years of photos stored there that I
+didn't have anywhere else. Part of the problem is that cell phones
+make it so easy to take a bunch of pictures--it's too much work to go
+through and organize them when Google Photos can do it for you. Then
+you can just search for "Venice" or "Porsche," and it can find what
+you want better than if you tried tagging everything yourself. Does an
+adult with two young kids have time to set up OCR to extract text from
+document pics, setup tensorflow to tag people and objects, borg backup
+to some offsite location, etc.? Nope.
+
+I get worried when I read those stories online about people having
+their google accounts suspended for no obvious reason and with no
+recourse. That wouldn't be a sad way to lose your photos and
+videos. I had previously used OneDrive for photos and videos, but I
+hit the 100 GB storage limit and was morally opposed to buying an
+office subscription to get it to 1TB. Just let me buy storage a la
+carte!
+
+
+Anyways, the first part of photo storage independence would be
+downloading all the photos to local storage on my
+computer. Theoretically, I have enough space on one or two of my 1TB
+SSDs, but it would have been really tight and I wanted to consolidate
+everything to one place. (I was also looking for a project). So I
+decided to buy two 8TB WD RED NAS drives, which I would plug into this
+computer. I'm planning to set them up in a software RAID1
+configuration for a little more durability.
+
+So, I didn't see any easy way to download photos from Google Photos. I
+saw a tool online that you could authorize to use APIs to do it, but I
+was a little worried about downloading a lot through that tool in case
+it flagged my account. There is a built-in Google Takeout tool that lets you
+download all your history, so I tried that. I chose to have links to
+zip files emailed to me and to split the zip files every 2 GB. I had
+like 60-70GB of photos/videos, so I was expecting like 30-40 links.
+
+
+The next day, I got an email with about 185 links of 2GB files. I
+downloaded about 10 of them and then gave up. I'm not sure how the
+metadata or whatever was going on could take up that much extra
+space. I looked in one of the files and it had a bunch of JSON files
+and the files were from different years, so it didn't seem like there
+was an easy way to select what you want.
+
+Exchanging money for convenience, I upped my Google One account
+storage limit from 100GB to 2TB and then re-exported to Google
+Drive. That was easier, then I just needed to get the Google Drive
+sync tool to download the ten-or-so 50GB files. I probably could have
+just selected 50GB links with the email option in retrospect. The
+Google Drive sync tool doesn't know how to resume failed downloads or
+pause/restart, and the bandwidth download cap feature doesn't work. So
+it was really painful watching that try to download everything, and
+thankfully my ISP has suspended data caps during COVID. OneDrive was
+comparatively much easier, but it was syncing smaller files
+(individual images/videos) so it's not an equal comparison.
+
+
+I ordered my two 8TB WD RED NAS drives from Amazon in "frustration
+free" packaging without thinking twice about it, but in hindsight,
+that should have been a red flag. Here is how they arrived:
+
+![Amazon shipped WD HDD](/assets/amazon-wd-hdd.jpg)
+
+If you can't see it, there are holes poked in the anti-static
+bags--probably from the drives hitting each other or other
+things... Anyways, I decided to return those without opening them and
+re-ordered through Newegg. Hopefully those will turn out better. I'll
+continue the story in part 2.
