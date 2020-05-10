@@ -1,0 +1,111 @@
+---
+layout: post
+title:  "Home NAS Part 2: Install"
+date:  Sat, 09 May 2020 17:18:04 -0700
+tags:
+  - NAS
+  - btrfs
+  - xxhash
+  - samba
+---
+
+
+In my previous [post](/2020/05/03/nas.html)
+I talked about my motivation for putting together a NAS setup at home
+to backup photos.
+
+To continue where we left off, thankfully newegg packaged the HDD appropriately:
+
+![Newegg shipped WD HDD](/assets/newegg-wd-hdd.jpg)
+
+After realizing I didn't have the proper SATA power cables and getting
+those, I inserted the drives into my machine and set up btrfs.
+
+
+[btrfs](https://en.wikipedia.org/wiki/Btrfs) is a modern filesystem
+that ships with the Linux kernel. Btrfs provides some features that
+you wouldn't get with ext4:
+
+  - Software RAID without additional software (I'm running RAID1 with
+    two 8TB drives)
+  - Transparent compression (per file or per volume). I think per-file
+    is the way to go (`chattr +c`).
+  - Hashes on filesystem data and metadata. Ability to repair with
+    RAID. I'm using xxhash. Link to [hash method comparisons](https://github.com/rurban/smhasher/).
+  - Copy on write (`cp --reflink <source file> <destination file>`)
+  - Subvolumes (looks like a subfolder but you can mount it separately)
+  - Snapshots of subvolumes. If you run btrfs on your root drive, when
+    you set it up, after mkfs.btrfs, you can create subvolumes for
+    your root directory. Then setup Linux on the subvolume. Then it's
+    easy to take snapshots and switch between snapshots of root.
+  - Data deduplication (with userspace tools)
+
+The biggest competitor on Linux to btrfs is ZFS (and maybe XFS to some
+extent). ZFS is not shipped with the Linux kernel so it may be a little
+more work to set up (depending on your Linux distribution). Ubuntu
+20.04 has made it pretty easy if you want to try ZFS.
+
+I compiled the latest btrfs tools and I'm using the latest stable
+kernel which I compiled myself. It's recommended to use the latest
+btrfs code because it's under pretty active development and if I have
+to post to a mailing list I'd get better help if I'm using the latest
+code. Most software developers aren't as interested in helping people
+running older versions of their code. 
+
+```sh
+/usr/local/bin/mkfs.btrfs -d raid1 -m raid1 --checksum xxhash -L wdred8 /dev/sdb /dev/sdd
+```
+
+I added the following line to my fstab and mounted the drive (this
+UUID is unique to my drive, so replace it for yours):
+
+```
+UUID=69d03e6e-55c3-4c52-8602-1100b9db0feb /mnt/backup btrfs rw,relatime,space_cache,subvolid=5,subvol=/ 0 2
+```
+
+I created some subvolumes for photos (if I need to snapshot it):
+
+```sh
+subvolume create /mnt/backup/photos
+...
+```
+
+I installed samba [following this
+tutorial](https://ubuntu.com/tutorials/install-and-configure-samba). Basically: (`sudo apt update && sudo apt install samba && sudo
+ufw allow samba`)
+
+Editing /etc/samba/smb.conf:
+
+```ini
+[tphotos]
+ comment = TimmyPhotos
+ path = /mnt/backup/photos
+ read only = no
+ browsable = yes
+```
+
+You'll need to create users (`useradd`) then separate samba users
+(`smbpasswd -a user`).
+
+
+To take care of your data, you should do some
+maintenance. Scrubbing makes sure the hash checks succeed and fixes
+those errors. Balancing will copy all the data on the filesystem which
+can reclaim some space or rebalance the data ratios between multiple
+drives in a RAID setup. There are good tools/scripts here:
+[https://github.com/kdave/btrfsmaintenance](https://github.com/kdave/btrfsmaintenance). Here
+are some commands for Debian/Ubuntu:
+
+```sh
+git clone https://github.com/kdave/btrfsmaintenance
+cd btrfsmaintenance
+sudo ./dist-install.sh
+sudo cp *.timer /etc/systemd/system
+sudo cp *.service /etc/systemd/system
+sudo systemctl start btrfs-scrub.timer
+```
+
+Last, but not least, you should have alerts if your data is in
+trouble. I'll cover that in the next post.
+
+
