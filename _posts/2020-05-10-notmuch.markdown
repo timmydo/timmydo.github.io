@@ -1,0 +1,207 @@
+---
+layout: post
+title:  "Notmuch email"
+date:  Sat, 09 May 2020 23:17:24 -0700
+tags:
+  - notmuch
+  - emacs
+  - aerc
+---
+
+In a previous post, [I described how I was trying out aerc for
+email](/2020/01/19/linux-mail.html) after moving back to a Linux-based
+primary desktop machine. As a started tinkering with things and
+subscribing to more email lists, a simple aerc-based setup wasn't
+cutting it. I know aerc has notmuch support, but I wanted better
+thread support and better emacs integration. 
+
+When I first set up offlineimap, I was putting everything from each
+email provider into a separate folder. The next step would be a
+rule-based filing to put mailing list into separate folders. But
+putting email into different folders would have been a band-aid. I
+felt like I needed a full email tagging solution. Searching and
+threading were must-have features. So it was time to try out
+[notmuch](https://notmuchmail.org/).
+
+The first step would be to set up emacs as an email client. That was
+pretty straightforward (this hasn't really been tuned at all):
+
+```lisp
+(setq mail-host-address "mydomain")
+(setq user-full-name "My Name")
+(setq user-mail-address "mail@mydomain")
+
+(setq send-mail-function 'smtpmail-send-it)
+(setq message-send-mail-function 'smtpmail-send-it)
+
+(setq send-mail-function    'smtpmail-send-it
+          smtpmail-smtp-server  "my.smtp.server"
+          smtpmail-stream-type  'ssl
+          smtpmail-smtp-service 465)
+(defun my-message-mode-setup ()
+       (setq fill-column 72)
+       (turn-on-auto-fill))
+(add-hook 'message-mode-hook 'my-message-mode-setup)
+```
+
+Then I set up the splash screen for notmuch (after package-install):
+
+```lisp
+(setq notmuch-saved-searches '(
+    (:name "all"
+    :query "*"
+    :sort-order newest-first
+    :key "a")
+
+    (:name "inbox"
+    :query "tag:inbox and not (tag:list)"
+    :key "i")
+
+    (:name "sent"
+    :query "tag:from-me"
+    :sort-order newest-first
+    :key "s")
+
+    (:name "btrfs"
+    :query "tag:btrfs and tag:inbox")
+    
+    (:name "rss"
+    :query "folder:rss and tag:inbox")
+
+    (:name "github"
+    :query "folder:github and tag:inbox")
+
+    (:name "notmuch"
+    :query "tag:notmuch and tag:inbox"
+    :key "n")
+
+    (:name "emacs-devel"
+    :query "tag:emacs-devel and tag:inbox")
+
+    (:name "friend"
+    :query "tag:friend and tag:inbox"
+    :sort-order newest-first)
+))
+```
+
+Then I needed to have notmuch index my email. Create this script in `~/.config/notmuch/new.sh`:
+```sh
+#!/bin/sh
+
+nm=/usr/bin/notmuch
+$nm new 2>/dev/null
+$nm tag --batch --input=/home/timmy/.config/notmuch/tags.txt
+```
+
+I created this `tags.txt` file:
+
+```txt
++btrfs +list -- linux-btrfs@vger.kernel.org
++emacs-devel +list -- emacs-devel@gnu.org
++notmuch +list -- notmuch@notmuchmail.org
++aerc +list -- ~sircmpwn/aerc@lists.sr.ht
++list -- folder:rss
++list -- folder:github
++to-me -- to:myemailaddress
++from-me -- from:myemailaddress
++patch -- subject:PATCH
+```
+
+My `~/.config/notmuch/config` is pretty basic:
+
+```ini
+[database]
+path=/home/timmy/mail
+[user]
+name=My Name
+primary_email=timmy@email1
+other_email=timmy@email2;timmy@email3;
+[new]
+tags=unread;inbox;
+ignore=
+[search]
+exclude_tags=spam;
+[maildir]
+synchronize_flags=true
+```
+
+I created a user systemd user service to run notmuch on my maildir that was populated by
+offlineimap:
+
+`~/.config/systemd/user/notmuch.service`:
+```ini
+[Unit]
+Description=Notmuch new
+Documentation=man:notmuch(1)
+
+[Service]
+Type=oneshot
+ExecStart=/home/timmy/.config/notmuch/new.sh
+TimeoutStopSec=120
+
+[Install]
+WantedBy=default.target
+```
+
+`~/.config/systemd/user/notmuch.timer`:
+```ini
+[Unit]
+Description=Notmuch timer
+
+[Timer]
+OnBootSec=1m
+OnUnitInactiveSec=5m
+
+[Install]
+WantedBy=default.target
+```
+
+
+Then run `systemctl --user daemon-reload && systemctl --user start
+notmuch.timer && systemctl --user status notmuch.timer` to start the
+notmuch indexer.
+
+
+Then start notmuch in GNU/Emacs with `M-x notmuch`.
+
+![Notmuch hello buffer](/assets/screenshot_2020-05-10-143141.png)
+
+
+This isn't complete without talking about how I get RSS feeds mixed
+into my email. Obviously, the end goal is to spend the whole day in
+GNU/Emacs. Having to open up 20 tabs with your favorite websites or
+blogs and refresh them occasionally is not ideal. The solution I chose
+is to write a systemd job scrape rss feeds and inject them into your
+maildir for notmuch to index. I couldn't find anything online that I
+liked so I wrote a quick app in [Go](https://golang.org/) to do the
+job:
+
+[Source and install instructions for feed2maildir](https://www.github.com/timmydo/feed2maildir).
+
+A simple `fetchrss.sh` might look like this:
+
+```sh
+#!/bin/sh
+
+fm() {
+~/bin/feed2maildir --feed $1 --maildir ~/mail/rss
+}
+gh() {
+~/bin/feed2maildir --feed $1 --maildir ~/mail/github
+}
+
+fm "https://www.phoronix.com/rss.php"
+fm "https://lwn.net/headlines/rss"
+fm "https://timmydouglas.com/feed.xml"
+fm "https://news.ycombinator.com/rss"
+gh "https://github.com/microsoft/BPerf/commits/dev.atom"
+gh "https://github.com/mmcdole/gofeed/commits/master.atom"
+```
+
+The only major gap I have right now is that my notmuch database isn't
+replicated to other machines. I haven't had the need to solve that
+problem yet, but when I do, I'll write another blog entry on it.
+
+![RSS folder view](/assets/screenshot_2020-05-10-151029.png)
+
+![Sample news item in notmuch on GNU/Emacs](/assets/screenshot_2020-05-10-151133.png)
