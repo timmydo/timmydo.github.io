@@ -1,0 +1,69 @@
+---
+layout: post
+title:  "DNS over TLS with CoreDNS"
+date:  Sat, 16 May 2020 15:13:51 -0700
+tags:
+  - coredns
+  - tls
+  - dns
+---
+
+In a previous post, [I set up DNS over
+TLS](/2019/06/09/dns-over-tls.html) with unbound on my Ubiquiti
+EdgeRouter Lite. I can't remember what exactly happened, but at some
+point I updated the router software and the Linux distro didn't have a
+package for unbound anymore. So I moved DNS to another computer
+running CoreDNS.
+
+If you are using IPv6, you may need to be careful that your IPv6
+configuration settings don't pick up your ISP's DNS server. I won't go
+into details here, but for me that meant running a command like `set
+interfaces ethernet eth2 dhcpv6-pd pd 0 interface eth1 no-dns`.
+
+Anyways, the first step is installing CoreDNS. It wasn't packaged for my
+Linux distro, so I just [downloaded the latest release off
+github](https://github.com/coredns/coredns/releases), and unzipped the
+binary to my /usr/bin (or /usr/local/bin) folder. The [deployment
+repository](https://github.com/coredns/deployment/tree/master/systemd)
+has some scripts you can use to set it up with systemd.
+
+I also ran a `useradd coredns -d /var/lib/coredns` set up a
+`/etc/coredns/Corefile` (feel free to remove the IPv6 forward):
+
+```text
+. {
+  bind 10.18.11.2
+  prometheus
+  log
+  errors
+  cache
+  forward . tls://9.9.9.9 tls://[2620:fe::fe]:853 {
+    tls_servername dns.quad9.net
+    health_check 15s
+  }
+
+  hosts {
+    10.18.11.2 timmy
+    10.18.11.2 timmy.home
+    fallthrough
+  }
+}
+```
+
+I can monitor all coredns logs/dns requests through `journalctl -f -u
+coredns`. I also added a job to `/etc/prometheus/prometheus.yaml` to
+scrape:
+
+```yaml
+  - job_name: coredns
+    static_configs:
+      - targets: ['localhost:9153']
+```
+
+then `systemctl reload prometheus`.
+
+
+![Sample graph with DNS
+latency](/assets/screenshot_2020-05-16-153346.png)
+
+
