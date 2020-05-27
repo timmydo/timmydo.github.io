@@ -1,0 +1,123 @@
+---
+layout: post
+title:  "Home NAS Part 4: Home Photo Gallery with thumbsup"
+date:  Tue, 26 May 2020 22:27:10 -0700
+tags:
+  - thumbsup
+  - photos
+  - NAS
+---
+
+After I set up my home NAS, I wanted to display my home photos on my
+local intranet. I looked at about 5 or so static photo gallery
+generator tools until I found
+[thumbsup](https://thumbsup.github.io/). More useful github link
+[here](https://github.com/thumbsup/thumbsup). I was very close to
+writing something myself, but thumbsup was good enough.
+
+The tool isn't smart enough to be run on a massive collection of
+photos and have the result look like Google Photos. It requires
+cleaning and organizing your files first. To start out, I wrote a
+script to build a folder structure with photos for running the tool on
+by:
+
+  - Changing the filename to a hash of the file contents. This
+    eliminates duplicates and issues with html encoding the URL. (I
+    had some files with `#` in them and it caused issues)
+  - Sort into folder structure of `YYYY/MM` for gallery creation. I
+    was using YYYY-MM-DD + some other stuff, but it would be too hard
+    to find anything if I needed to drill down into individual days.
+  - Prioritize `exiftool` capture date over folder date
+  
+Here is the script:
+
+```sh
+#!/bin/bash
+set -euo pipefail
+
+PHOTO_ROOT=${PHOTO_ROOT:-by-date}
+for file in "$@";do
+    HASH=$(xxh128sum -q "$file"|cut -d ' ' -f1)
+    EXT=${file##*.}
+    YEAR=unknown
+    MONTH=unknown
+    DNAME=$(dirname "$file")
+    DATETIME=unknown
+
+    DATETIME=$(exiftool -DateTimeOriginal -d %Y-%m-%d -j "$file" 2>/dev/null| jq -r '.[0].DateTimeOriginal')
+    if [[ "$DATETIME" =~ .*([0-9][0-9][0-9][0-9])-([0-9][0-9])-[0-9][0-9].* ]]; then
+	YEAR=${BASH_REMATCH[1]}
+	MONTH=${BASH_REMATCH[2]}
+    fi
+
+
+    if [[ $YEAR == "unknown" ]]; then
+	if [[ "$DNAME" =~ .*([0-9][0-9][0-9][0-9])-([0-9][0-9])-[0-9][0-9].* ]]; then
+	    YEAR=${BASH_REMATCH[1]}
+	    MONTH=${BASH_REMATCH[2]}
+	fi
+    fi
+
+    if [[ $YEAR == "unknown" || $MONTH == "unknown" ]]; then
+	echo "Unresolved date $YEAR/$MONTH: $file"
+    else
+	mkdir -p "${PHOTO_ROOT}/${YEAR}/${MONTH}"
+	ln -v "$file" "${PHOTO_ROOT}/${YEAR}/${MONTH}/${HASH}.${EXT}"
+    fi
+    
+done
+```
+
+I would invoke it with the following:
+
+`find 20[0-9][0-9] -iname '*.jpg' -exec ~/bin/reorg-photo.sh '{}' ';'`
+
+(And I'd also do the same with mp4 and other file extensions)
+
+Then, install and run the tool:
+
+```sh
+npm install thumbsup
+node_modules/thumbsup/bin/thumbsup.js --input /mnt/backup/photos/by-date --output /mnt/backup/galleries/timmy --photo-download link --video-download link --photo-preview link --video-preview link
+```
+
+Here is what the gallery list looks like (the gallery list for each
+year looks similiar)
+
+![Gallery List View](/assets/screenshot_2020-05-26-220452.png)
+
+
+View inside a gallery:
+
+![Gallery View](/assets/screenshot_2020-05-26-220708.png)
+
+
+The photo view:
+
+![Photo View](/assets/screenshot_2020-05-26-223017.png)
+
+It could probably use some cleaning up, but this isn't really a
+replacement for Google Photos. I do enjoy being able to look at things
+with zero lag and at full resolution though.
+
+
+The files are served from apache2 which comes installed on my
+distro. There is nothing special in the apache2 config file--this is the
+gist of it:
+
+```xml
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /mnt/backup
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+<Directory /mnt/backup>
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+</Directory>
+```
+
+The DNS name is handled by my DNS server, which I detailed in my [last post](/2020/05/16/coredns.html).
