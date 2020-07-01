@@ -1,0 +1,88 @@
+---
+layout: post
+title:  "Learning Audio 101"
+date:  Wed, 01 Jul 2020 13:16:58 -0700
+tags:
+  - audio
+  - RCA
+  - phono
+  - karaoke
+  - schiit
+  - mixer
+  - yamaha
+  - speakers
+---
+
+I was looking for a new mini-hobby, and found an idea staring me in
+the face: my [audio-technica ATR-2100 USB microphone](https://www.audio-technica.com/cms/wired_mics/b8dd84773f83092c/index.html). I've been using
+it as a mic for work and gaming, but I felt like I wasn't really
+getting the most out of it through its USB connection, which I also
+used to run my headphones, a budget-level Sennheiser HD 419. It was
+time to upgrade.
+
+I quickly decided on the [Massdrop Sennheiser
+HD6XX](https://drop.com/buy/massdrop-sennheiser-hd6xx), which has
+received good reviews and lists for around $220. When you get a nice
+pair of headphones, apparently it's not enough to plug them directly
+into your computer, you want an external soundcard called a
+[DAC](https://en.wikipedia.org/wiki/Digital-to-analog_converter). Then
+you don't just plug it into that directly, you get a [pre-amp](https://en.wikipedia.org/wiki/Preamplifier) designed
+for headphones.
+
+
+For the DAC and headphone pre-amp, I decided on a [Schiit
+Modi](https://www.schiit.com/products/modi-1) and the [Schiit Magni
+3+](https://www.schiit.com/products/magni-1). I think the good thing
+about these is the Modi should work with any software, and the Magni
+doesn't have any software dependency so I should be able to take it
+with me. They're fairly modular so I could upgrade the pieces
+individually.
+
+
+Back to the mic--I wanted to try out the XLR connection, but my
+motherboard doesn't have an XLR connection obviously. This type of mic
+needs [phantom power](https://en.wikipedia.org/wiki/Phantom_power) to
+work. The XLR cable will send a [balanced mono output
+signal](https://en.wikipedia.org/wiki/Balanced_audio) to a [Focusrite
+scarlett
+2i2](https://focusrite.com/en/usb-audio-interface/scarlett/scarlett-2i2)
+I purchased. I
+think this is probably overkill for gaming/office VoIP stuff, but I
+may dabble with other things at a later date (digital piano, etc.) and
+I wanted to keep my options open. I
+think I've made the mistake too many times of buying something
+entry-level and then having to upgrade, so I decided
+to start mid-level here.
+
+
+Then I decided I wanted to setup a place for karaoke. I had connected a
+newly built gaming computer to a TV downstairs for VR, but there was only a
+simple HDMI connection there for regular TV tasks. I bought a [Yamaha
+MG10XU](https://usa.yamaha.com/products/proaudio/mixers/mg_series_xu_model/index.html)
+for connecting a couple of microphones (with XLR cables) and the line
+out on my PC. The output from the mixer will feed into some [JBL
+Studio 530](https://www.jbl.com) speakers I bought. They were on
+sale--a pair for $300. The speakers will be powered by a "Kinter K2020A+
+Limited Edition Original Tripath TA2020-020 Class-T Hi-Fi Audio Mini
+Amplifier with 12V 5A Power Supply Black" that you can find online for
+like $40. If the karaoke isn't a hit, I'll be able to use
+everything somewhere else. Whereas if I just bought a karaoke box, I'd
+have a big paper weight. I haven't got everything yet, but that's the
+tentative plan.
+
+While on this journey, I spent more time than I originally expected
+trying to figure out all the new terms and connectors. (I think I
+enjoy the learning and spending money part part of hobbies more than
+the hobby itself...)  There are a bunch of different connector types:
+XLR, RCA, 3.5mm, 6.35mm or 1/4" TRS or TS, speaker wire, etc. Within
+those, you have terms like balanced vs unbalanced, power amp vs
+pre-amp, RCA vs TRS vs TS, monitor vs speaker. I probably should have
+spent more time on Wikipedia learning the concepts than searching for
+terms on the internet:
+
+  - [Interfaces/Connectors](https://en.wikipedia.org/wiki/Audio_and_video_interfaces_and_connectors)
+  - [Phone connector](https://en.wikipedia.org/wiki/Phone_connector_(audio))
+  - [RCA connector](https://en.wikipedia.org/wiki/RCA_connector)
+
+Once I get everything, maybe I'll post a follow up if there are
+learnings with talking about.
